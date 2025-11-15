@@ -1,0 +1,111 @@
+# Path to your oh-my-zsh installation.
+export ZSH=$HOME/.oh-my-zsh
+
+# Set name of the theme to load.
+# Look in ~/.oh-my-zsh/themes/
+# Optionally, if you set this to "random", it'll load a random theme each
+# time that oh-my-zsh is loaded.
+ZSH_THEME="sagischwarz"
+
+# Aliases
+alias u="brew upgrade && brew cleanup -s"
+alias uu="u && npm update -g && rustup update && vim +PlugUpdate +PlugUpgrade +qall && sleep 1 && tput rmcup"
+alias vim="nvim"
+alias top="btop"
+#alias ag="ag --hidden --skip-vcs-ignores"
+alias rg="rg --hidden --no-ignore-vcs --smart-case"
+alias c="clear"
+alias h="cd ~ && c"
+alias xclip="xclip -sel c"
+alias r="reset"
+alias gitbase='cd $(git rev-parse --show-toplevel)'
+alias bat="bat --theme=\$(defaults read -globalDomain AppleInterfaceStyle &> /dev/null && echo default || echo GitHub)"
+alias bmr="pkill -x BetterMouse && open -a BetterMouse"
+alias dhcp_renew="sudo ipconfig set en0 BOOTP && sudo ipconfig set en0 DHCP"
+alias words="pbpaste | wc -w"
+adbs() {adb shell -t 'export PATH="${PATH}:/data/local/tmp"; export JCOLOR=1; alias c=clear; /system/bin/sh'}
+
+# Uncomment the following line to disable bi-weekly auto-update checks.
+DISABLE_AUTO_UPDATE="true"
+
+# Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
+# Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
+# Example format: plugins=(rails git textmate ruby lighthouse)
+plugins=(git zsh-autosuggestions zsh-syntax-highlighting)
+
+source $ZSH/oh-my-zsh.sh
+
+# Fix slow paste (https://github.com/zsh-users/zsh-autosuggestions/issues/238)
+pasteinit() {
+  OLD_SELF_INSERT=${${(s.:.)widgets[self-insert]}[2,3]}
+  zle -N self-insert url-quote-magic # I wonder if you'd need `.url-quote-magic`?
+}
+
+pastefinish() {
+  zle -N self-insert $OLD_SELF_INSERT
+}
+zstyle :bracketed-paste-magic paste-init pasteinit
+zstyle :bracketed-paste-magic paste-finish pastefinish
+
+# fzf
+source /opt/homebrew/opt/fzf/shell/key-bindings.zsh
+source /opt/homebrew/opt/fzf/shell/completion.zsh
+export FZF_DEFAULT_COMMAND="fd --type f --hidden --no-ignore --exclude .git"
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+export FZF_ALT_C_COMMAND="fd --type d --hidden --no-ignore --exclude .git"
+_fzf_compgen_path() {
+  fd --hidden --follow --exclude ".git" . "$1"
+}
+_fzf_compgen_dir() {
+  fd --type d --hidden --follow --exclude ".git" . "$1"
+}
+bindkey "©" fzf-cd-widget
+
+# User configuration
+export GOPATH=$HOME/Code/Go
+export PIPENV_VENV_IN_PROJECT=true
+
+# Improve history
+export HISTFILESIZE=1000000000
+export HISTSIZE=1000000000
+HISTORY_IGNORE="(l|ls|ls -alh|cd|cd ..*|cd -|pwd|exit|docker rm*|abbrev*|open *)"
+setopt INC_APPEND_HISTORY
+setopt SHARE_HISTORY
+setopt HIST_EXPIRE_DUPS_FIRST
+setopt HIST_IGNORE_DUPS
+setopt HIST_IGNORE_ALL_DUPS
+setopt HIST_IGNORE_SPACE
+setopt HIST_FIND_NO_DUPS
+setopt HIST_SAVE_NO_DUPS
+setopt HIST_BEEP
+
+# Evals and exports
+export TERM="xterm-256color"
+
+export PATH="${PATH}:$HOME/.local/bin"
+export PATH="${PATH}:$(ruby -e 'puts Gem.user_dir')/bin"
+export PATH="${PATH}:${GOPATH//://bin:}/bin"
+export PATH="${PATH}:$HOME/.cargo/bin"
+export PATH="${PATH}:$HOME/Library/Python/3.13/bin"
+export PATH="${PATH}:/Applications/Sublime Text.app/Contents/SharedSupport/bin"
+
+export EDITOR="nvim"
+export VISUAL="nvim"
+
+export MAKEFLAGS="-j $(sysctl -n hw.ncpu)"
+
+export HOMEBREW_NO_ENV_HINTS=1
+
+source ~/.env
+
+# Install NPM stuff in home directory
+# echo "prefix = $NPM_PACKAGES" >> ~/.npmrc
+NPM_PACKAGES="$HOME/.npm-packages"
+PATH="$NPM_PACKAGES/bin:/opt/homebrew/opt/node@22/bin:$PATH"
+MANPATH="$NPM_PACKAGES/share/man:$(manpath)"
+NODE_PATH="$NPM_PACKAGES/lib/node_modules:$NODE_PATH"
+
+fuckapple() {
+  xattr -d com.apple.quarantine $1
+}
+
