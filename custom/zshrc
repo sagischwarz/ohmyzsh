@@ -19,7 +19,7 @@ alias h="cd ~ && c"
 alias xclip="xclip -sel c"
 alias r="reset"
 alias gitbase='cd $(git rev-parse --show-toplevel)'
-alias bat="bat --theme=\$(defaults read -globalDomain AppleInterfaceStyle &> /dev/null && echo default || echo GitHub)"
+alias bat="bat --theme=\"\$(defaults read -globalDomain AppleInterfaceStyle &> /dev/null && echo 'Catppuccin Mocha' || echo 'Catppuccin Latte')\""
 alias bmr="pkill -x BetterMouse && open -a BetterMouse"
 alias dhcp_renew="sudo ipconfig set en0 BOOTP && sudo ipconfig set en0 DHCP"
 alias words="pbpaste | wc -w"
